@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ex 13 - AJAX and XML</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        h2 {
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        table {
+            border-collapse: collapse;
+            width: 70%;
+        }
+        th, td {
+            border: 1px solid #999;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Online Shopping - AJAX & XML</h2>
+    
+    <!-- Button triggers the AJAX call -->
+    <button type="button" onclick="loadXMLDoc()">Fetch Order Details</button>
+
+    <!-- The fetched XML data will be displayed inside this div -->
+    <div id="orderTableContainer"></div>
+
+    <script>
+        function loadXMLDoc() {
+            // 1. Create XMLHttpRequest object
+            var xhttp = new XMLHttpRequest();
+            
+            // 2. Define callback function
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    displayData(this);
+                }
+            };
+            
+            // 3. Open connection and send request asynchronously
+            xhttp.open("GET", "orders.xml", true);
+            xhttp.send();
+        }
+
+        function displayData(xml) {
+            var i;
+            var xmlDoc = xml.responseXML;
+            
+            // Start building the HTML table
+            var table = "<table><tr><th>Order ID</th><th>Customer Name</th><th>Product</th><th>Qty</th><th>Price ($)</th></tr>";
+            
+            // Retrieve all <order> tags from the XML
+            var x = xmlDoc.getElementsByTagName("order");
+            
+            // Loop through each order and extract data
+            for (i = 0; i < x.length; i++) {
+                table += "<tr><td>" +
+                x[i].getElementsByTagName("id")[0].childNodes[0].nodeValue + "</td><td>" +
+                x[i].getElementsByTagName("customer")[0].childNodes[0].nodeValue + "</td><td>" +
+                x[i].getElementsByTagName("product")[0].childNodes[0].nodeValue + "</td><td>" +
+                x[i].getElementsByTagName("quantity")[0].childNodes[0].nodeValue + "</td><td>" +
+                x[i].getElementsByTagName("price")[0].childNodes[0].nodeValue + "</td></tr>";
+            }
+            table += "</table>";
+            
+            // Inject the table into the HTML DOM
+            document.getElementById("orderTableContainer").innerHTML = table;
+        }
+    </script>
+
+</body>
+</html>
